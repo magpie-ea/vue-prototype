@@ -1,13 +1,16 @@
 <template>
     <div class="trial">
+
         <template v-if="slide === 0">
             <p>&nbsp;</p>
             <p>Please listen</p>
             <audio :src="primingAudio" autoplay="true" @ended="slide = 1"/>
         </template>
+
         <template v-if="slide === 1">
 
         </template>
+
         <template v-if="slide === 2">
             <div class="options">
                 <div class="option1">{{option1}}</div>
@@ -15,6 +18,7 @@
                 <div class="option2">{{option2}}</div>
             </div>
         </template>
+
         <template v-if="slide === 3">
             <div class="options">
                 <div class="option1" @mouseover="onOption1">{{option1}}</div>
@@ -24,6 +28,7 @@
             <button @click="playing = true" v-if="!playing">Go</button>
             <audio :src="trialAudio" :autoplay="playing" loop="true"/>
         </template>
+
         <template v-if="slide === 4">
 
         </template>
