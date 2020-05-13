@@ -87,10 +87,12 @@
         },
         methods: {
             onOption1() {
+                if (!this.playing) return
                 this.addResult({endLabel: this.option1})
                 this.slide++
             },
             onOption2() {
+                if (!this.playing) return
                 this.addResult({endLabel: this.option2})
                 this.slide++
             }
