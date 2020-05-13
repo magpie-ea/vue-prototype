@@ -3,8 +3,10 @@
         <div>Mouse tracking experiment</div>
         <template #0="{ nextScreen }">
             <Screen :title="'Welcome'">
-                Hello!
-                <button @click="nextScreen">Start</button>
+                <template #0>
+                    Hello!
+                    <button @click="nextScreen">Start</button>
+                </template>
             </Screen>
         </template>
         <template #[trial.screen] v-for="trial in audioTrials">
@@ -19,7 +21,9 @@
 
         <template #3>
             <Screen :title="'Thanks!'">
+                <template #0>
                 Goodbye
+                </template>
             </Screen>
         </template>
     </Experiment>
@@ -29,6 +33,7 @@
     import Experiment from "./components/Experiment";
     import Screen from "./components/Screen";
     import AudioDiscriminationWithPriming from "./components/AudioDiscriminationWithPriming";
+    import Vue from 'vue'
 
     export default {
         name: 'App',
@@ -58,6 +63,10 @@
             }
         }
     }
+
+    Vue.directive('wait', (el, binding) => {
+        setTimeout(() => binding.value(), Number(binding.arg))
+    })
 </script>
 
 <style>

@@ -1,47 +1,44 @@
 <template>
-    <div class="trial">
-
-        <template v-if="slide === 0">
+    <Screen title="Please listen">
+        <template #0="{ nextSlide }">
             <p>&nbsp;</p>
-            <p>Please listen</p>
-            <audio :src="primingAudio" autoplay="true" @ended="slide = 1"/>
+            <audio :src="primingAudio" :autoplay="true" @ended="nextSlide"/>
         </template>
 
-        <template v-if="slide === 1">
-
+        <template #1="{ nextSlide }">
+            <div v-wait:500="nextSlide"></div>
         </template>
 
-        <template v-if="slide === 2">
-            <div class="options">
+        <template #2="{ nextSlide }">
+            <div class="options" v-wait:500="nextSlide">
                 <div class="option1">{{option1}}</div>
                 <div class="space"></div>
                 <div class="option2">{{option2}}</div>
             </div>
         </template>
 
-        <template v-if="slide === 3">
+        <template #3="{ nextSlide }">
             <div class="options">
-                <div class="option1" @mouseover="onOption1">{{option1}}</div>
+                <div class="option1" @mouseover="onOption1(nextSlide)">{{option1}}</div>
                 <div class="space"></div>
-                <div class="option2" @mouseover="onOption2">{{option2}}</div>
+                <div class="option2" @mouseover="onOption2(nextSlide)">{{option2}}</div>
             </div>
             <button @click="playing = true" v-if="!playing">Go</button>
-            <audio :src="trialAudio" :autoplay="playing" loop="true"/>
+            <audio :src="trialAudio" :autoplay="playing" :loop="true"/>
         </template>
 
-        <template v-if="slide === 4">
-
+        <template #4="{ nextScreen }">
+            <div v-wait:3000="nextScreen"></div>
         </template>
-    </div>
+    </Screen>
 </template>
 
 <script>
-    function sleep(time) {
-        return new Promise(resolve => setTimeout(resolve, time))
-    }
+    import Screen from "./Screen";
 
     export default {
         name: "AudioDiscriminationWithPriming",
+        components: {Screen},
         inject: ['nextScreen', 'addResult'],
         props: {
             primingAudio: {
@@ -63,38 +60,19 @@
         },
         data() {
             return {
-                slide: 0,
                 playing: false
             }
         },
-        watch: {
-            async slide(slide) {
-                if (slide === 1) {
-                    await sleep(500)
-                    this.slide++
-                    return
-                }
-                if (slide === 2) {
-                    await sleep(500)
-                    this.slide++
-                    return
-                }
-                if (slide === 4) {
-                    await sleep(500)
-                    this.nextScreen()
-                }
-            }
-        },
         methods: {
-            onOption1() {
+            onOption1(cb) {
                 if (!this.playing) return
                 this.addResult({endLabel: this.option1})
-                this.slide++
+                cb()
             },
-            onOption2() {
+            onOption2(cb) {
                 if (!this.playing) return
                 this.addResult({endLabel: this.option2})
-                this.slide++
+                cb()
             }
         }
     }
@@ -105,6 +83,7 @@
         display: flex;
         flex-direction: row;
     }
+
     .options .space {
         flex: 1;
     }
@@ -115,6 +94,10 @@
         padding: 70px;
         width: 100px;
         background: lightyellow;
+    }
+
+    button {
+        bottom: 20px;
     }
 
     audio {
