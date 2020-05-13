@@ -10,7 +10,7 @@
 <script>
     export default {
         name: "Screen",
-        inject: ['nextScreen'],
+        inject: ['nextScreen', 'getRootElement'],
         props: {
             title: {
                 type: String,
@@ -30,7 +30,16 @@
                     return
                 }
                 this.currentSlide++
+            },
+            onMouseMove(e) {
+                this.$emit('mousemove', {x: e.layerX, y: e.layerY})
             }
+        },
+        mounted() {
+            this.getRootElement().addEventListener('mousemove', this.onMouseMove)
+        },
+        beforeDestroy() {
+            this.getRootElement().removeEventListener('mousemove', this.onMouseMove)
         }
     }
 </script>

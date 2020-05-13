@@ -24,7 +24,7 @@
             }
         },
         provide() {
-            return {nextScreen: this.nextScreen, addResult: this.addResult}
+            return {nextScreen: this.nextScreen, addResult: this.addResult, getRootElement: this.getRootElement}
         },
         computed: {
           numScreens() {
@@ -44,6 +44,9 @@
                     this.results[this.currentScreen] = []
                 }
                 this.results[this.currentScreen].push(data)
+            },
+            getRootElement() {
+                return this.$el
             }
         }
     }

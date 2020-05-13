@@ -1,5 +1,5 @@
 <template>
-    <Screen title="Please listen">
+    <Screen title="Please listen" @mousemove="onMouseMove">
         <template #0="{ nextSlide }">
             <p>&nbsp;</p>
             <audio :src="primingAudio" :autoplay="true" @ended="nextSlide"/>
@@ -60,18 +60,23 @@
         },
         data() {
             return {
-                playing: false
+                playing: false,
+                mouseMovements: []
             }
         },
         methods: {
+            onMouseMove(coordinates) {
+                if (!this.playing) return
+                this.mouseMovements.push(coordinates)
+            },
             onOption1(cb) {
                 if (!this.playing) return
-                this.addResult({endLabel: this.option1})
+                this.addResult({endLabel: this.option1, mouseMovements: this.mouseMovements})
                 cb()
             },
             onOption2(cb) {
                 if (!this.playing) return
-                this.addResult({endLabel: this.option2})
+                this.addResult({endLabel: this.option2, mouseMovements: this.mouseMovements})
                 cb()
             }
         }
