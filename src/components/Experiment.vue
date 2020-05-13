@@ -8,7 +8,7 @@
                 {{currentScreen+1}}/{{numScreens}}
             </div>
         </div>
-        <slot :name="currentScreen" :nextScreen="nextScreen">
+        <slot :name="currentScreen" :nextScreen="nextScreen" :addResult="addResult">
             Screen #{{ currentScreen }} not found
         </slot>
     </div>
@@ -19,11 +19,12 @@
         name: "Experiment",
         data() {
             return {
-                currentScreen: 0
+                currentScreen: 0,
+                results: {}
             }
         },
         provide() {
-            return {nextScreen: this.nextScreen}
+            return {nextScreen: this.nextScreen, addResult: this.addResult}
         },
         computed: {
           numScreens() {
@@ -37,6 +38,12 @@
                     return
                 }
                 this.currentScreen += 1
+            },
+            addResult(data) {
+                if (!this.results[this.currentScreen]) {
+                    this.results[this.currentScreen] = []
+                }
+                this.results[this.currentScreen].push(data)
             }
         }
     }
@@ -46,6 +53,7 @@
     .experiment {
         margin: 100px auto;
         width: 800px;
+        height: 600px;
         border-radius: 10px;
         border: 1px solid #ababab;
         padding: 20px;
