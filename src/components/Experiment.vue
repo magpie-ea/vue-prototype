@@ -66,12 +66,15 @@
         text-align: center;
         color: #2c3e50;
         position: relative;
+        display: flex;
+        flex-direction: column;
     }
 
     .header {
         text-align: left;
         display: flex;
         flex-direction: row;
+        flex-grow: 0;
     }
 
     .header .col {

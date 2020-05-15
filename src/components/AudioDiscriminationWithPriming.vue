@@ -23,8 +23,8 @@
                 <div class="space"></div>
                 <div class="option2" @mouseover="onOption2(nextSlide)">{{option2}}</div>
             </div>
-            <button @click="playing = true" v-if="!playing">Go</button>
-            <audio :src="trialAudio" :autoplay="playing" :loop="true"/>
+            <button @click="onPressPlay" v-if="!playing">Go</button>
+            <audio :src="trialAudio" ref="audio" :loop="true"/>
         </template>
 
         <template #4="{ nextScreen }">
@@ -65,18 +65,25 @@
             }
         },
         methods: {
+            onPressPlay() {
+                this.playing = true
+                this.$refs.audio.play()
+            },
             onMouseMove(coordinates) {
                 if (!this.playing) return
                 this.mouseMovements.push(coordinates)
             },
             onOption1(cb) {
                 if (!this.playing) return
-                this.addResult({endLabel: this.option1, mouseMovements: this.mouseMovements})
-                cb()
+                this.submit(this.option1, cb)
             },
             onOption2(cb) {
                 if (!this.playing) return
-                this.addResult({endLabel: this.option2, mouseMovements: this.mouseMovements})
+                this.submit(this.option2, cb)
+            },
+            submit(label, cb) {
+                this.addResult({endLabel: label, mouseMovements: this.mouseMovements})
+                console.log('mouse movements:', JSON.parse(JSON.stringify(this.mouseMovements)))
                 cb()
             }
         }
@@ -103,6 +110,7 @@
 
     button {
         bottom: 20px;
+        position: absolute;
     }
 
     audio {
