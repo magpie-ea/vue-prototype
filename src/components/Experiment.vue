@@ -8,7 +8,7 @@
                 {{currentScreen+1}}/{{numScreens}}
             </div>
         </div>
-        <slot :name="currentScreen" :nextScreen="nextScreen" :addResult="addResult">
+        <slot :name="currentScreen" :nextScreen="nextScreen" :addResult="addResult" :trial="trial">
             Screen #{{ currentScreen }} not found
         </slot>
     </div>
@@ -17,10 +17,42 @@
 <script>
     export default {
         name: "Experiment",
+        props: {
+            trials: {
+                type: Object,
+                required: true
+            }
+        },
         data() {
+            // Setup magic "trial" slot property
+            const trial = {}
+            for (const type of Object.keys(this.trials)) {
+                if (Array.isArray(this.trials[type])) {
+                    trial.__defineGetter__(type, () => {
+                        if (this.currentTrial[type]) {
+                            return this.currentTrial[type]
+                        }
+                        this.currentTrial[type] = this.trials[type].shift()
+                        return this.currentTrial[type]
+                    })
+                }else if ('function' === typeof this.trials[type]) {
+                    trial.__defineGetter__(type, () => {
+                        if (this.currentTrial[type]) {
+                            return this.currentTrial[type]
+                        }
+                        this.currentTrial[type] = this.trials[type](this.currentScreen)
+                        return this.currentTrial[type]
+                    })
+                }else {
+                    throw new Error('Unsupported type of trial type definition for trial type ' + type + '. Expected either Array or Function')
+                }
+            }
+
             return {
                 currentScreen: 0,
-                results: {}
+                results: {},
+                currentTrial: {},
+                trial
             }
         },
         provide() {
@@ -33,6 +65,7 @@
         },
         methods: {
             nextScreen(index) {
+                this.currentTrial = {}
                 if (typeof index === 'number') {
                     this.currentScreen = index
                     return

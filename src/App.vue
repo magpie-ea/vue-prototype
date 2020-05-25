@@ -1,6 +1,7 @@
 <template>
-    <Experiment id="app">
+    <Experiment id="app" :trials="{ audio, options }">
         <div>Mouse tracking experiment</div>
+
         <template #0="{ nextScreen }">
             <Screen :title="'Welcome'">
                 <template #0>
@@ -9,13 +10,14 @@
                 </template>
             </Screen>
         </template>
-        <template #[trial.screen] v-for="trial in audioTrials">
+
+        <template #[screen]="{ trial }" v-for="screen in 2">
             <AudioDiscriminationWithPriming
-                    :priming-audio="trial.primingAudio"
-                    :trial-audio="trial.trialAudio"
-                    :option1="trial.option1"
-                    :option2="trial.option2"
-                    :key="trial.screen">
+                    :priming-audio="trial.audio.primingAudio"
+                    :trial-audio="trial.audio.trialAudio"
+                    :option1="trial.options.option1"
+                    :option2="trial.options.option2"
+                    :key="screen">
             </AudioDiscriminationWithPriming>
         </template>
 
@@ -33,7 +35,6 @@
     import Experiment from "./components/Experiment";
     import Screen from "./components/Screen";
     import AudioDiscriminationWithPriming from "./components/AudioDiscriminationWithPriming";
-    import Vue from 'vue'
 
     export default {
         name: 'App',
@@ -44,29 +45,42 @@
         },
         data() {
             return {
-                audioTrials: [
-                    {
-                        screen: 1,
-                        primingAudio: "audio/seashore.ogg",
-                        trialAudio: "audio/sealion.ogg",
-                        option1: "Fish",
-                        option2: "Mammal",
-                    },
-                    {
-                        screen: 2,
-                        primingAudio: "audio/seashore.ogg",
-                        trialAudio: "audio/sealion.ogg",
-                        option1: "Mammal",
-                        option2: "Bird",
-                    }
-                ]
+                audioTrials: readAudioCsv(),
+                options: readOptionsCsv()
+            }
+        },
+        methods: {
+            audio() {
+                return this.audioTrials.pop()
             }
         }
     }
 
-    Vue.directive('wait', (el, binding) => {
-        setTimeout(() => binding.value(), Number(binding.arg))
-    })
+    // Just a stub to take the place of a real magpie-supplied function
+    function readAudioCsv() {
+        return [
+            {
+                primingAudio: "audio/seashore.ogg",
+                trialAudio: "audio/sealion.ogg",
+            },
+            {
+                primingAudio: "audio/seashore.ogg",
+                trialAudio: "audio/sealion.ogg",
+            }
+        ]
+    }
+    function readOptionsCsv() {
+        return [
+            {
+                option1: "Fish",
+                option2: "Mammal",
+            },
+            {
+                option1: "Mammal",
+                option2: "Bird",
+            }
+        ]
+    }
 </script>
 
 <style>
